@@ -1,0 +1,170 @@
+basePath: /api/todo-list
+definitions:
+  models.Task:
+    properties:
+      activeAt:
+        type: string
+      done:
+        type: boolean
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a simple TODO List API (hl)
+  title: TODO List API
+  version: "1.0"
+paths:
+  /api/todo-list/tasks:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of tasks
+      parameters:
+      - description: Task status filter (active or done)
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of tasks
+          schema:
+            items:
+              $ref: '#/definitions/models.Task'
+            type: array
+      summary: Get tasks
+      tags:
+      - tasks
+    post:
+      consumes:
+      - application/json
+      description: Creates a new task
+      parameters:
+      - description: Task title
+        in: body
+        name: title
+        required: true
+        schema:
+          type: string
+      - description: Task active date (YYYY-MM-DD)
+        in: body
+        name: activeAt
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: id of the created task
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            type: string
+      summary: Create a new task
+      tags:
+      - tasks
+  /api/todo-list/tasks/{ID}:
+    delete:
+      description: Deletes a task
+      parameters:
+      - description: Task ID
+        in: path
+        name: ID
+        required: true
+        type: string
+      responses:
+        "204":
+          description: Task deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Task not found
+          schema:
+            type: string
+      summary: Delete a task
+      tags:
+      - tasks
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a task by its ID
+      parameters:
+      - description: Task ID
+        in: path
+        name: ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task details
+          schema:
+            $ref: '#/definitions/models.Task'
+        "404":
+          description: Task not found
+          schema:
+            type: string
+      summary: Get a task by ID
+      tags:
+      - tasks
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing task
+      parameters:
+      - description: Task ID
+        in: path
+        name: ID
+        required: true
+        type: string
+      - description: Task title
+        in: body
+        name: title
+        required: true
+        schema:
+          type: string
+      - description: Task active date (YYYY-MM-DD)
+        in: body
+        name: activeAt
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Task updated successfully
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Task not found
+          schema:
+            type: string
+      summary: Update an existing task
+      tags:
+      - tasks
+  /health:
+    get:
+      description: Check if the service is running.
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Health check
+swagger: "2.0"

@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	_ "github.com/allwsaa/todo-list-task2/docs"
 	"github.com/allwsaa/todo-list-task2/handlers"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -11,10 +12,10 @@ import (
 )
 
 func main() {
-	// @title TODO List API
-	// @version 1.0
-	// @description This is a simple TODO List API (hl)
-	// @host localhost:8080
+	// @Title TODO List API
+	// @Version 1.0
+	// @Description This is a simple TODO List API (hl)
+	// @Host localhost:8080
 	// @BasePath /api/todo-list
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -24,8 +25,10 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Welcome to the Todo List Service"))
 	})
-
-	r.Get("/swagger/*", httpSwagger.WrapHandler)
+	//swagger endpoint
+	r.Get("/swagger/*", httpSwagger.Handler())
+	//healthcheck endpoint
+	r.Get("/health", handlers.HealthCheckHandler)
 
 	r.Post("/api/todo-list/tasks", handlers.CreateTask)
 	r.Put("/api/todo-list/tasks/{ID}", handlers.UpdateTask)

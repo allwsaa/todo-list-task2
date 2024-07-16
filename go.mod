@@ -6,6 +6,7 @@ require (
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/google/uuid v1.6.0
 )
+require github.com/swaggo/files v1.0.1 // indirect
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect

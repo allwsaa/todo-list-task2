@@ -6,8 +6,6 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8080",
-    "basePath": "/api/todo-list",
     "paths": {
         "/api/todo-list/tasks": {
             "get": {
@@ -24,8 +22,13 @@
                 "summary": "Get tasks",
                 "parameters": [
                     {
+                        "enum": [
+                            "active",
+                            "done"
+                        ],
                         "type": "string",
-                        "description": "Task status filter (active or done)",
+                        "default": "active",
+                        "description": "Task status",
                         "name": "status",
                         "in": "query"
                     }
@@ -56,21 +59,12 @@
                 "summary": "Create a new task",
                 "parameters": [
                     {
-                        "description": "Task title",
-                        "name": "title",
+                        "description": "Task to create",
+                        "name": "task",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Task active date (YYYY-MM-DD)",
-                        "name": "activeAt",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.Task"
                         }
                     }
                 ],
@@ -94,42 +88,6 @@
             }
         },
         "/api/todo-list/tasks/{ID}": {
-            "get": {
-                "description": "Retrieves a task by its ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "tasks"
-                ],
-                "summary": "Get a task by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Task ID",
-                        "name": "ID",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Task details",
-                        "schema": {
-                            "$ref": "#/definitions/models.Task"
-                        }
-                    },
-                    "404": {
-                        "description": "Task not found",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
             "put": {
                 "description": "Updates an existing task",
                 "consumes": [
@@ -151,21 +109,12 @@
                         "required": true
                     },
                     {
-                        "description": "Task title",
-                        "name": "title",
+                        "description": "Updated task data",
+                        "name": "task",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Task active date (YYYY-MM-DD)",
-                        "name": "activeAt",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.Task"
                         }
                     }
                 ],
@@ -208,6 +157,38 @@
                 "responses": {
                     "204": {
                         "description": "Task deleted successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/todo-list/tasks/{ID}/done": {
+            "put": {
+                "description": "Marks a task as done",
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Complete a task",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "ID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Task completed successfully",
                         "schema": {
                             "type": "string"
                         }

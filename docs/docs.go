@@ -30,8 +30,13 @@ const docTemplate = `{
                 "summary": "Get tasks",
                 "parameters": [
                     {
+                        "enum": [
+                            "active",
+                            "done"
+                        ],
                         "type": "string",
-                        "description": "Task status filter (active or done)",
+                        "default": "active",
+                        "description": "Task status",
                         "name": "status",
                         "in": "query"
                     }
@@ -62,21 +67,12 @@ const docTemplate = `{
                 "summary": "Create a new task",
                 "parameters": [
                     {
-                        "description": "Task title",
-                        "name": "title",
+                        "description": "Task to create",
+                        "name": "task",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Task active date (YYYY-MM-DD)",
-                        "name": "activeAt",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.Task"
                         }
                     }
                 ],
@@ -100,42 +96,6 @@ const docTemplate = `{
             }
         },
         "/api/todo-list/tasks/{ID}": {
-            "get": {
-                "description": "Retrieves a task by its ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "tasks"
-                ],
-                "summary": "Get a task by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Task ID",
-                        "name": "ID",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Task details",
-                        "schema": {
-                            "$ref": "#/definitions/models.Task"
-                        }
-                    },
-                    "404": {
-                        "description": "Task not found",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
             "put": {
                 "description": "Updates an existing task",
                 "consumes": [
@@ -157,21 +117,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Task title",
-                        "name": "title",
+                        "description": "Updated task data",
+                        "name": "task",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Task active date (YYYY-MM-DD)",
-                        "name": "activeAt",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.Task"
                         }
                     }
                 ],
@@ -227,6 +178,38 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/todo-list/tasks/{ID}/done": {
+            "put": {
+                "description": "Marks a task as done",
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Complete a task",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "ID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Task completed successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Task not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "description": "Check if the service is running.",
@@ -266,8 +249,8 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
-	BasePath:         "/api/todo-list",
+	Host:             "",
+	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "TODO List API",
 	Description:      "This is a simple TODO List API (hl)",

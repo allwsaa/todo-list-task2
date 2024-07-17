@@ -1,4 +1,3 @@
-basePath: /api/todo-list
 definitions:
   models.Task:
     properties:
@@ -11,7 +10,6 @@ definitions:
       title:
         type: string
     type: object
-host: localhost:8080
 info:
   contact: {}
   description: This is a simple TODO List API (hl)
@@ -24,7 +22,11 @@ paths:
       - application/json
       description: Retrieves a list of tasks
       parameters:
-      - description: Task status filter (active or done)
+      - default: active
+        description: Task status
+        enum:
+        - active
+        - done
         in: query
         name: status
         type: string
@@ -45,18 +47,12 @@ paths:
       - application/json
       description: Creates a new task
       parameters:
-      - description: Task title
+      - description: Task to create
         in: body
-        name: title
+        name: task
         required: true
         schema:
-          type: string
-      - description: Task active date (YYYY-MM-DD)
-        in: body
-        name: activeAt
-        required: true
-        schema:
-          type: string
+          $ref: '#/definitions/models.Task'
       produces:
       - application/json
       responses:
@@ -94,30 +90,6 @@ paths:
       summary: Delete a task
       tags:
       - tasks
-    get:
-      consumes:
-      - application/json
-      description: Retrieves a task by its ID
-      parameters:
-      - description: Task ID
-        in: path
-        name: ID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Task details
-          schema:
-            $ref: '#/definitions/models.Task'
-        "404":
-          description: Task not found
-          schema:
-            type: string
-      summary: Get a task by ID
-      tags:
-      - tasks
     put:
       consumes:
       - application/json
@@ -128,18 +100,12 @@ paths:
         name: ID
         required: true
         type: string
-      - description: Task title
+      - description: Updated task data
         in: body
-        name: title
+        name: task
         required: true
         schema:
-          type: string
-      - description: Task active date (YYYY-MM-DD)
-        in: body
-        name: activeAt
-        required: true
-        schema:
-          type: string
+          $ref: '#/definitions/models.Task'
       produces:
       - application/json
       responses:
@@ -156,6 +122,27 @@ paths:
           schema:
             type: string
       summary: Update an existing task
+      tags:
+      - tasks
+  /api/todo-list/tasks/{ID}/done:
+    put:
+      description: Marks a task as done
+      parameters:
+      - description: Task ID
+        in: path
+        name: ID
+        required: true
+        type: string
+      responses:
+        "204":
+          description: Task completed successfully
+          schema:
+            type: string
+        "404":
+          description: Task not found
+          schema:
+            type: string
+      summary: Complete a task
       tags:
       - tasks
   /health:

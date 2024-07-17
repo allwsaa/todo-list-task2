@@ -16,13 +16,13 @@ import (
 var tasks = map[string]*models.Task{}
 var tasksLock sync.Mutex
 
+// CreateTask godoc
 // @Summary Create a new task
 // @Description Creates a new task
 // @Tags tasks
 // @Accept json
 // @Produce json
-// @Param title body string true "Task title"
-// @Param activeAt body string true "Task active date (YYYY-MM-DD)"
+// @Param task body models.Task true "Task to create"
 // @Success 201 {object} map[string]string "id of the created task"
 // @Failure 400 {string} string "Bad request"
 // @Router /api/todo-list/tasks [post]
@@ -71,14 +71,14 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// UpdateTask godoc
 // @Summary Update an existing task
 // @Description Updates an existing task
 // @Tags tasks
 // @Accept json
 // @Produce json
 // @Param ID path string true "Task ID"
-// @Param title body string true "Task title"
-// @Param activeAt body string true "Task active date (YYYY-MM-DD)"
+// @Param task body models.Task true "Updated task data"
 // @Success 204 {string} string "Task updated successfully"
 // @Failure 400 {string} string "Bad request"
 // @Failure 404 {string} string "Task not found"
@@ -129,13 +129,14 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// @Summary Delete a task
-// @Description Deletes a task
+// CompleteTask godoc
+// @Summary Complete a task
+// @Description Marks a task as done
 // @Tags tasks
 // @Param ID path string true "Task ID"
-// @Success 204 {string} string "Task deleted successfully"
+// @Success 204 {string} string "Task completed successfully"
 // @Failure 404 {string} string "Task not found"
-// @Router /api/todo-list/tasks/{ID} [delete]
+// @Router /api/todo-list/tasks/{ID}/done [put]
 func CompleteTask(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "ID")
 	tasksLock.Lock()
@@ -153,15 +154,14 @@ func CompleteTask(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// @Summary Get a task by ID
-// @Description Retrieves a task by its ID
+// DeleteTask godoc
+// @Summary Delete a task
+// @Description Deletes a task
 // @Tags tasks
-// @Accept json
-// @Produce json
 // @Param ID path string true "Task ID"
-// @Success 200 {object} models.Task "Task details"
+// @Success 204 {string} string "Task deleted successfully"
 // @Failure 404 {string} string "Task not found"
-// @Router /api/todo-list/tasks/{ID} [get]
+// @Router /api/todo-list/tasks/{ID} [delete]
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "ID")
 	tasksLock.Lock()
@@ -175,6 +175,7 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// GetTask godoc
 // @Summary Get a task by ID
 // @Description Retrieves a task by its ID
 // @Tags tasks
@@ -200,10 +201,11 @@ func GetTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(task)
 }
 
+// GetTasks godoc
 // @Summary Get tasks
 // @Description Retrieves a list of tasks
 // @Tags tasks
-// @Param status query string false "Task status filter (active or done)"
+// @Param status query string false "Task status" Enums(active, done) default(active)
 // @Accept json
 // @Produce json
 // @Success 200 {array} models.Task "List of tasks"

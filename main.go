@@ -11,12 +11,12 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+// @Title TODO List API
+// @Version 1.0
+// @Description This is a simple TODO List API (hl)
+// BasePath
 func main() {
-	// @Title TODO List API
-	// @Version 1.0
-	// @Description This is a simple TODO List API (hl)
-	// @Host localhost:8080
-	// @BasePath /api/todo-list
+
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
